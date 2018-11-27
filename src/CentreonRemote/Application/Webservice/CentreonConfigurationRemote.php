@@ -222,10 +222,10 @@ class CentreonConfigurationRemote extends CentreonWebServiceAbstract
         WizardConfigurationRequestValidator::validate();
 
         /** @var $pollerConfigurationService LinkedPollerConfigurationService */
-        /** @var $pollerConfigurationBridge PollerConfigurationRequestBridge */
-        /** @var $serverConfigurationService ServerConnectionConfigurationService */
         $pollerConfigurationService = $this->getDi()['centreon_remote.poller_config_service'];
+        /** @var $serverConfigurationService ServerConnectionConfigurationService */
         $serverConfigurationService = $this->getDi()[$configurationServiceName];
+        /** @var $pollerConfigurationBridge PollerConfigurationRequestBridge */
         $pollerConfigurationBridge = $this->getDi()['centreon_remote.poller_config_bridge'];
 
         $serverIP = $_POST['server_ip'];

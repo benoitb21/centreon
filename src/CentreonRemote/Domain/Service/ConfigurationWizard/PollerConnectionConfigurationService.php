@@ -61,7 +61,7 @@ class PollerConnectionConfigurationService extends ServerConnectionConfiguration
             $onePeerRetentionMode = 'yes';
 
             // get template function to generate input flow in central broker configuration
-            $openFlowInputConfig = $this->getResource('central_input_flow_one_peer_retention.php');
+            $openFlowInputConfig = $this->getResource('input_flow_one_peer_retention.php');
 
             // get central broker config id
             // we need it to add an input to pull broker data from distant poller

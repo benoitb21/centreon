@@ -16,6 +16,7 @@ use CentreonRemote\Domain\Service\ConfigurationWizard\RemoteConnectionConfigurat
 use CentreonRemote\Domain\Service\InformationsService;
 use CentreonRemote\Domain\Service\NotifyMasterService;
 use CentreonRemote\Domain\Service\TaskService;
+use CentreonRemote\Infrastructure\Service\PollerInteractionService;
 
 class ServiceProvider implements AutoloadServiceProviderInterface
 {
@@ -42,6 +43,16 @@ class ServiceProvider implements AutoloadServiceProviderInterface
             return $service;
         };
 
+        $pimple['centreon.taskservice'] = function (Container $pimple): TaskService {
+            $service = new TaskService(new AppKeyGeneratorService(), $pimple['centreon.db-manager'], new CentcoreCommandService());
+            return $service;
+        };
+
+        $pimple['centreon_remote.poller_interaction_service'] = function (Container $pimple): PollerInteractionService {
+            $service = new PollerInteractionService($pimple);
+            return $service;
+        };
+
         $pimple['centreon_remote.informations_service'] = function (Container $pimple): InformationsService {
             $service = new InformationsService($pimple);
             return $service;
@@ -64,7 +75,13 @@ class ServiceProvider implements AutoloadServiceProviderInterface
         };
 
         $pimple['centreon_remote.poller_config_service'] = function (Container $pimple): LinkedPollerConfigurationService {
-            $service = new LinkedPollerConfigurationService($pimple);
+            $service = new LinkedPollerConfigurationService(
+                $pimple['centreon.db-manager']->getAdapter('configuration_db')
+            );
+            $service->setBrokerRepository($pimple['centreon.broker_repository']);
+            $service->setBrokerConfigurationService($pimple['centreon.broker_configuration_service']);
+            $service->setPollerInteractionService($pimple['centreon_remote.poller_interaction_service']);
+            $service->setTaskService($pimple['centreon.taskservice']);
             return $service;
         };
 
@@ -97,11 +114,6 @@ class ServiceProvider implements AutoloadServiceProviderInterface
         $pimple['centreon_remote.exporter'] = function (Container $container): Infrastructure\Service\ExporterService {
             $service = new Infrastructure\Service\ExporterService($container);
 
-            return $service;
-        };
-
-        $pimple['centreon.taskservice'] = function (Container $pimple): TaskService {
-            $service = new TaskService(new AppKeyGeneratorService(), $pimple['centreon.db-manager'], new CentcoreCommandService());
             return $service;
         };
 
